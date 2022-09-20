@@ -1,5 +1,15 @@
 import Head from 'next/head';
+import { GetStaticProps } from 'next/types';
 import { links } from '../data/links';
+import prisma from '../lib/prisma';
+
+export const getStaticProps: GetStaticProps = async () => {
+  const feed = await prisma.user.findMany({});
+  return {
+    props: { feed },
+    revalidate: 10,
+  };
+};
 
 export default function Home() {
   return (
