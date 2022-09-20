@@ -34,3 +34,7 @@ export const links = [
     url: "https://apollographql.com",
   },
 ];
+
+export const data = {
+  ...links
+}
