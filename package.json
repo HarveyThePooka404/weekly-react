@@ -1,40 +1,12 @@
 {
-  "name": "materio-mui-react-nextjs-admin-template-free",
+  "name": "weekly-react",
   "description": "Most Powerful & Comprehensive Free MUI React NextJS Admin Dashboard Template built for developers! 🚀",
   "license": "MIT",
   "version": "1.0.0",
   "author": {
-    "name": "ThemeSelection",
-    "url": "https://themeselection.com/"
+    "name": "Sylvain Buisson",
+    "url": "https://owldesign.dk/"
   },
-  "bugs": {
-    "url": "https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/issues"
-  },
-  "private": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free.git"
-  },
-  "homepage": "https://themeselection.com/products/materio-free-mui-react-nextjs-admin-template/",
-  "keywords": [
-    "react",
-    "javascript",
-    "admin",
-    "typescript",
-    "dashboard",
-    "material-design",
-    "nextjs",
-    "material-ui",
-    "admin-dashboard",
-    "free",
-    "mui",
-    "admin-template",
-    "admin-panel",
-    "freebies",
-    "nextjs-template",
-    "react-dashboard",
-    "themeselection"
-  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -50,20 +22,29 @@
     "@emotion/styled": "^11.6.0",
     "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.3",
+    "@next-auth/prisma-adapter": "1.0.4",
     "@popperjs/core": "^2.11.2",
+    "@prisma/client": "4.3.1",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/typography": "^0.5.7",
     "apexcharts-clevision": "3.28.5",
+    "autoprefixer": "^10.4.12",
     "clsx": "^1.1.1",
     "mdi-material-ui": "^7.1.0",
     "next": "12.0.4",
+    "next-auth": "4.10.3",
     "nprogress": "^0.2.0",
     "react": "17.0.2",
     "react-apexcharts": "^1.3.9",
     "react-datepicker": "^4.5.0",
     "react-dom": "17.0.2",
+    "react-markdown": "^8.0.3",
     "react-perfect-scrollbar": "^1.5.8",
-    "react-popper": "^2.2.5"
+    "react-popper": "^2.2.5",
+    "tailwindcss": "^3.1.8"
   },
   "devDependencies": {
+    "@types/next-auth": "3.13.0",
     "@types/node": "16.11.11",
     "@types/nprogress": "^0.2.0",
     "@types/react": "17.0.37",
@@ -78,6 +59,11 @@
     "eslint-plugin-import": "^2.25.4",
     "next-transpile-modules": "^9.0.0",
     "prettier": "2.5.1",
-    "typescript": "4.5.2"
+    "prisma": "4.3.1",
+    "ts-node": "10.9.1",
+    "typescript": "4.8.3"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
