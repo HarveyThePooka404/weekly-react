@@ -26,6 +26,7 @@ const options = {
         })
   
         if (user) {
+          console.log("if user", user)
           return user
         } else {
 
@@ -34,12 +35,20 @@ const options = {
       }
     })
   ],
+  session: {
+   jwt: true
+  },
   callbacks: {
-    async session({ session, token, user }) {
-      // Send properties to the client, like an access_token from a provider.
-      session.accessToken = token.accessToken
-      return session
-    }
+    async session({ session, token }) {
+      session.user = token.user;
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user;
+      }
+      return token;
+    },
   },
   secret: process.env.SECRET,
 };

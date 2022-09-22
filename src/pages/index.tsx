@@ -17,7 +17,16 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import Trophy from 'src/views/dashboard/Trophy'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 
+// ** Auth protection
+import { useSession } from "next-auth/react"
+import React from 'react'
+
 const Dashboard = () => {
+  const {data: session, status } = useSession();
+  React.useEffect(() => {
+    console.log(session)
+  }, [session])
+
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
