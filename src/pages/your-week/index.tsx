@@ -3,15 +3,12 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import TypographyHeadings from 'src/views/typography/TypographyHeadings';
-import { useTheme } from '@emotion/react';
 import Button from '@mui/material/Button';
 
 export default function YourWeek() {
     
     const today = new Date().toDateString();
     const currentWeek = getWeekAsArray();
-
 
     function getFirstDayOfWeek(today: Date) {
         const date = new Date(today);
@@ -39,7 +36,7 @@ export default function YourWeek() {
     <div>
     <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}> Your Week </Typography>
     <Typography variant='body2'> Here you can find a summary of the current week</Typography>
-    <Button variant="outlined" size="sm" sx={{marginTop: 2, marginBottom: 4}}> Expand all </Button>
+    <Button variant="outlined"  size="small" sx={{marginTop: 2, marginBottom: 4}}> Expand all </Button>
     {currentWeek.map((day) => {return(
 
       <Accordion>
@@ -48,7 +45,7 @@ export default function YourWeek() {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography sx={{fontWeight: 400}} > {day} </Typography>
+          <Typography sx={{fontWeight: 500}} > {day} </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
@@ -62,3 +59,4 @@ export default function YourWeek() {
     </div>
   );
 }
+
