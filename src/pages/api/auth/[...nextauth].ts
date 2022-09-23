@@ -1,12 +1,12 @@
-import { NextApiHandler } from "next";
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { NextApiHandler } from "next-auth/_next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import prisma from '../../../../lib/prisma'
+import prisma from '../../../lib/prisma'
 
 
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
+const authHandler: NextApiHandler = (req: any, res: any) => {
+  return NextAuth(req, res, options);
+};
 export default authHandler;
 
 const options = {
@@ -20,8 +20,8 @@ const options = {
       async authorize(credentials, req) {
         const user = await prisma.user.findFirst({
           where: {
-            username: credentials.username,
-            password: credentials.password
+            username: credentials?.username,
+            password: credentials?.password
           }
         })
   
@@ -39,7 +39,7 @@ const options = {
    jwt: true
   },
   callbacks: {
-    async session({ session, token }) {
+    async session({ session, token }): Promise<any> {
       session.user = token.user;
       return session;
     },

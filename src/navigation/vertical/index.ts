@@ -1,5 +1,5 @@
 // ** Icon imports
-import Login from 'mdi-material-ui/Login'
+import Calendar from 'mdi-material-ui/Calendar'
 import Table from 'mdi-material-ui/Table'
 import CubeOutline from 'mdi-material-ui/CubeOutline'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
@@ -29,10 +29,9 @@ const navigation = (): VerticalNavItemsType => {
       sectionTitle: 'Pages'
     },
     {
-      title: 'Login',
-      icon: Login,
-      path: '/pages/login',
-      openInNewTab: true
+      title: 'Your Week',
+      icon: Calendar,
+      path: '/your-week',
     }
   ]
 }
