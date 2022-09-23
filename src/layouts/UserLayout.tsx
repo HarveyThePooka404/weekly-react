@@ -17,6 +17,8 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useSession } from 'next-auth/react'
+import RouteProtect from 'src/navigation/guard/routeProtect'
 
 interface Props {
   children: ReactNode
@@ -35,6 +37,8 @@ const UserLayout = ({ children }: Props) => {
    *  ! Do not change this value unless you know what you are doing. It can break the template.
    */
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
+  const {data: session, status} = useSession() 
+
 
   return (
     <VerticalLayout
@@ -53,7 +57,7 @@ const UserLayout = ({ children }: Props) => {
         />
       )}
     >
-      {children}
+      <RouteProtect status={status} children={children}/>
     </VerticalLayout>
   )
 }

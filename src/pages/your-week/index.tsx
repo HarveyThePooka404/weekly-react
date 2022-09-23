@@ -5,9 +5,17 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 
-export default function YourWeek() {
+//documents
+import prisma from 'src/lib/prisma';
+import { getSession } from "next-auth/client"
+import { getWeekNumber } from 'src/lib/util';
+import { Props } from 'react-apexcharts';
+import { getToken } from 'next-auth/jwt';
+
+export default function YourWeek({days}: Props) {
+
+  console.log(days)
     
-    const today = new Date().toDateString();
     const currentWeek = getWeekAsArray();
 
     function getFirstDayOfWeek(today: Date) {
@@ -36,10 +44,11 @@ export default function YourWeek() {
     <div>
     <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}> Your Week </Typography>
     <Typography variant='body2'> Here you can find a summary of the current week</Typography>
+
     <Button variant="outlined"  size="small" sx={{marginTop: 2, marginBottom: 4}}> Expand all </Button>
     {currentWeek.map((day) => {return(
 
-      <Accordion>
+      <Accordion key={day}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -60,3 +69,27 @@ export default function YourWeek() {
   );
 }
 
+export async function getServerSideProps(context) {
+  const token: any = await getToken({
+    req: context.req,
+    secret: process.env.JWT_SECRET,
+  })
+
+  let days
+  if(token) {
+    days =  await prisma.day.findMany({
+      where: {
+        userId: token.user.id,
+        weekNumber: getWeekNumber(new Date().toDateString())
+      }
+    }) 
+  } else {
+    throw new Error("No Token ")
+  }
+
+  return {
+    props: {
+      days
+    }, //
+  }
+}
