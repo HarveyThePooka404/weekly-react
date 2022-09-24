@@ -26,7 +26,6 @@ const options = {
         })
   
         if (user) {
-          console.log("if user", user)
           return user
         } else {
 

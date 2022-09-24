@@ -7,60 +7,62 @@ import Button from '@mui/material/Button';
 
 //documents
 import prisma from 'src/lib/prisma';
-import { getSession } from "next-auth/client"
 import { getWeekNumber } from 'src/lib/util';
-import { Props } from 'react-apexcharts';
 import { getToken } from 'next-auth/jwt';
+import { Day, DayQuality, DayStatus } from '@prisma/client';
+import DayStatusPill from 'src/views/pills/DayStatusPill';
+import DayContent from 'src/views/day/DayContent';
 
-export default function YourWeek({days}: Props) {
+//rehydratation
+import { useRouter } from "next/router"
 
-  console.log(days)
-    
-    const currentWeek = getWeekAsArray();
+function getFirstDayOfWeek(today: Date) {
+  const date = new Date(today);
+  const day = date.getDay(); 
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(date.setDate(diff));
+}
 
-    function getFirstDayOfWeek(today: Date) {
-        const date = new Date(today);
-        const day = date.getDay(); 
-        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-        return new Date(date.setDate(diff));
-    }
+function getWeekAsArray(): Array<string> {
+  const monday = getFirstDayOfWeek(new Date());
+  const options = {weekday: "long", month: "long", day: "numeric"}
+  const arrayOfDaysAsString = [];
+  arrayOfDaysAsString.push(monday.toLocaleDateString('en-uk', options))
+  
+  for(let i = 1; i < 7; i++) {
+      const tomorrow = new Date(monday)
+      tomorrow.setDate(monday.getDate() + i)
+      arrayOfDaysAsString.push(tomorrow.toLocaleDateString('en-uk', options))
+  }
 
-    function getWeekAsArray(): Array<string> {
-        const monday = getFirstDayOfWeek(new Date());
-        const options = {weekday: "long", month: "long", day: "numeric"}
-        const arrayOfDaysAsString = [];
-        arrayOfDaysAsString.push(monday.toLocaleDateString('en-uk', options))
-        
-        for(let i = 1; i < 7; i++) {
-            const tomorrow = new Date(monday)
-            tomorrow.setDate(monday.getDate() + i)
-            arrayOfDaysAsString.push(tomorrow.toLocaleDateString('en-uk', options))
-        }
+  return arrayOfDaysAsString
+}
 
-        return arrayOfDaysAsString
-    }
-
+export default function YourWeek({days}: {days: Day[]}) {
+  const router = useRouter();
+  function refreshData() {
+    console.log("called")
+    router.replace(router.asPath)
+  }
+  
   return (
     <div>
     <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}> Your Week </Typography>
     <Typography variant='body2'> Here you can find a summary of the current week</Typography>
 
     <Button variant="outlined"  size="small" sx={{marginTop: 2, marginBottom: 4}}> Expand all </Button>
-    {currentWeek.map((day) => {return(
+    {days.map((day: Day) => {return(
 
-      <Accordion key={day}>
+      <Accordion key={day.id}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography sx={{fontWeight: 500}} > {day} </Typography>
+          <Typography sx={{fontWeight: 500}} > {day.date} <DayStatusPill status={day.status} quality={day.quality}/></Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </Typography>
+          <DayContent id={day.id} status={day.status} onStatusChange={refreshData}/>
         </AccordionDetails>
       </Accordion>
     )})}
@@ -69,7 +71,7 @@ export default function YourWeek({days}: Props) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: { req: any; }) {
   const token: any = await getToken({
     req: context.req,
     secret: process.env.JWT_SECRET,
@@ -84,8 +86,33 @@ export async function getServerSideProps(context) {
       }
     }) 
   } else {
-    throw new Error("No Token ")
+    throw new Error("No Token")
   }
+
+  if(days.length < 6) {
+    createAllWeeksDocument();
+  }
+  
+  function createAllWeeksDocument(): void {
+    const currentWeek = getWeekAsArray();
+    currentWeek.forEach(async (dateAsString) => {
+      const day = {
+        date: dateAsString, 
+        userId: token.user.id, 
+        quality: DayQuality.GOOD, 
+        status: DayStatus.TOBEDONE,
+        weekNumber: getWeekNumber(new Date().toDateString())
+      }
+      const dayDocument = await prisma.day.create({
+        data: {...day}
+      })
+      days.push(dayDocument)
+    })
+  }
+
+  days.sort((a: Day, b: Day) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime()
+  })
 
   return {
     props: {

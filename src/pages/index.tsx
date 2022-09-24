@@ -23,9 +23,6 @@ import React from 'react'
 
 const Dashboard = () => {
   const {data: session, status } = useSession();
-  React.useEffect(() => {
-    console.log(session)
-  }, [session])
 
   return (
     <ApexChartWrapper>
