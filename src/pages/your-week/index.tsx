@@ -41,7 +41,6 @@ function getWeekAsArray(): Array<string> {
 export default function YourWeek({days}: {days: Day[]}) {
   const router = useRouter();
   function refreshData() {
-    console.log("called")
     router.replace(router.asPath)
   }
   
