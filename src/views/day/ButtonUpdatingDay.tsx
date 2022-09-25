@@ -14,8 +14,9 @@ export default function ButtonUpdatingday({id, onStatusChange}: {id: string, onS
 
 async function updateDay(id: string, quality: DayQuality) {
     const data = {
-        id: id, 
-        quality: quality
+      id: id,
+      quality: quality,
+      status: 'DONE'
     }
     
     const JSONdata = JSON.stringify(data) 

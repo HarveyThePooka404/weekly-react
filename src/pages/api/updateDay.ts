@@ -14,14 +14,16 @@ export default async function handler(req, res){
 }
 
 async function UpdateDay(req, res){
+    const data = {...req.body}
+    delete data["id"];
+    
     try{
         const day = await prisma.day.update({
             where: {
                 id: req.body.id
             },
             data: {
-                status: DayStatus.DONE,
-                quality: req.body.quality
+                ...data
             }
         })
         res.status(200).json({
