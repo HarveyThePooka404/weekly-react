@@ -41,9 +41,10 @@ function getWeekAsArray(): Array<string> {
 export default function YourWeek({days}: {days: Day[]}) {
   const router = useRouter();
   function refreshData() {
-    console.log("called")
     router.replace(router.asPath)
   }
+
+  
   
   return (
     <div>
@@ -94,17 +95,18 @@ export async function getServerSideProps(context: { req: any; }) {
   }
   
   function createAllWeeksDocument(): void {
-    const currentWeek = getWeekAsArray();
-    currentWeek.forEach(async (dateAsString) => {
+    const currentWeek = getWeekAsArray()
+    currentWeek.forEach(async dateAsString => {
       const day = {
-        date: dateAsString, 
-        userId: token.user.id, 
-        quality: DayQuality.GOOD, 
+        date: dateAsString,
+        userId: token.user.id,
+        quality: DayQuality.GOOD,
         status: DayStatus.TOBEDONE,
-        weekNumber: getWeekNumber(new Date().toDateString())
+        weekNumber: getWeekNumber(new Date().toDateString()),
+        textDetail: ''
       }
       const dayDocument = await prisma.day.create({
-        data: {...day}
+        data: { ...day }
       })
       days.push(dayDocument)
     })
