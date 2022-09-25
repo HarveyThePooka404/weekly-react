@@ -76,7 +76,7 @@ model Day {
   quality DayQuality
   status DayStatus
   weekNumber Int
-
+  textDetail String?
 }
 
 enum DayQuality {
