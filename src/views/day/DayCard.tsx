@@ -8,8 +8,9 @@ import ButtonUpdatingday from './ButtonUpdatingDay'
 import { useRouter } from 'next/router'
 import { Button, TextareaAutosize } from '@mui/material'
 import { useEffect, useState } from 'react'
+import ChipInput from '../pills/ChipInput'
 
-export default function DayCard({ day }: { day: Day }) {
+export default function DayCard({ day, activities }: { day: Day; activities: string[] }) {
   const router = useRouter()
   const onStatusChange = () => {
     router.push(router.asPath)
@@ -75,6 +76,15 @@ export default function DayCard({ day }: { day: Day }) {
               </Button>
             </div>
           )}
+        </div>
+
+        {/* Region for activities details */}
+        <div>
+          <Typography variant='h6' sx={{ marginTop: 6, marginBottom: 2 }}>
+            What did you do during that day?
+          </Typography>
+
+          <ChipInput activities={activities} />
         </div>
       </CardContent>
     </Card>
