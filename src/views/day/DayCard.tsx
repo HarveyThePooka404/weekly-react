@@ -1,5 +1,4 @@
 import Card from '@mui/material/Card'
-import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import DayStatusPill from '../pills/DayStatusPill'
@@ -8,7 +7,7 @@ import ButtonUpdatingday from './ButtonUpdatingDay'
 
 import { useRouter } from 'next/router'
 import { Button, TextareaAutosize } from '@mui/material'
-import { render } from 'nprogress'
+import { useEffect, useState } from 'react'
 
 export default function DayCard({ day }: { day: Day }) {
   const router = useRouter()
@@ -16,7 +15,9 @@ export default function DayCard({ day }: { day: Day }) {
     router.push(router.asPath)
   }
 
-  let textDetailValue: string
+  const [state, setState] = useState('read')
+  const [textDetail, setTextDetail] = useState(day.textDetail ? day.textDetail : '')
+
   return (
     <Card sx={{ minWidth: 275, marginTop: 2 }}>
       <CardContent>
@@ -34,32 +35,42 @@ export default function DayCard({ day }: { day: Day }) {
           <Typography variant='h6' sx={{ marginTop: 6, marginBottom: 2 }}>
             What made it a <span style={{ textTransform: 'lowercase' }}>{day.quality}</span> day ?
           </Typography>
-          {day.textDetail == '' && (
-            <div>
-              <TextareaAutosize
-                aria-label='minimum height'
-                minRows={3}
-                style={{ width: '100%', fontFamily: 'inherit', fontSize: 'inherit' }}
-                onChange={e => {
-                  textDetailValue = e.target.value
-                }}
-              />
-              <Button
-                onClick={() => {
-                  updateDay(day.id, textDetailValue)
-                }}
-                variant='contained'
-                size='small'
-              >
-                Save
-              </Button>
-            </div>
-          )}
+          {day.textDetail == '' ||
+            (state == 'edit' && (
+              <div>
+                <TextareaAutosize
+                  aria-label='minimum height'
+                  minRows={3}
+                  style={{ width: '100%', fontFamily: 'inherit', fontSize: 'inherit' }}
+                  value={textDetail}
+                  onChange={e => {
+                    setTextDetail(e.target.value)
+                  }}
+                />
+                <Button
+                  sx={{ marginTop: 4 }}
+                  onClick={() => {
+                    updateDay(day.id, textDetail), setState('read'), onStatusChange()
+                  }}
+                  variant='contained'
+                  size='small'
+                >
+                  Save
+                </Button>
+              </div>
+            ))}
 
-          {day.textDetail !== '' && (
+          {state !== 'edit' && (
             <div>
-              <Typography> {day.textDetail}</Typography>
-              <Button variant='outlined' size='small' sx={{ marginTop: 4 }}>
+              <Typography> {textDetail} </Typography>
+              <Button
+                variant='outlined'
+                size='small'
+                sx={{ marginTop: 4 }}
+                onClick={() => {
+                  setState('edit')
+                }}
+              >
                 Edit
               </Button>
             </div>
