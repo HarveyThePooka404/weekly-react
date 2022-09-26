@@ -38,62 +38,71 @@ function getWeekAsArray(): Array<string> {
   return arrayOfDaysAsString
 }
 
-export default function YourWeek({days}: {days: Day[]}) {
-  const router = useRouter();
+export default function YourWeek({ days }: { days: Day[] }) {
+  const router = useRouter()
   function refreshData() {
     router.replace(router.asPath)
   }
 
-  
-  
+  if (days.length == 0) {
+    refreshData()
+  }
+
   return (
     <div>
-    <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}> Your Week </Typography>
-    <Typography variant='body2'> Here you can find a summary of the current week</Typography>
+      <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+        {' '}
+        Your Week{' '}
+      </Typography>
+      <Typography variant='body2'> Here you can find a summary of the current week</Typography>
 
-    <Button variant="outlined"  size="small" sx={{marginTop: 2, marginBottom: 4}}> Expand all </Button>
-    {days.map((day: Day) => {return(
-
-      <Accordion key={day.id}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography sx={{fontWeight: 500}} > {day.date} <DayStatusPill status={day.status} quality={day.quality}/></Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <DayContent id={day.id} status={day.status} onStatusChange={refreshData}/>
-        </AccordionDetails>
-      </Accordion>
-    )})}
-
+      <Button variant='outlined' size='small' sx={{ marginTop: 2, marginBottom: 4 }}>
+        {' '}
+        Expand all{' '}
+      </Button>
+      {days.map((day: Day) => {
+        return (
+          <Accordion key={day.id}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1a-content' id='panel1a-header'>
+              <Typography sx={{ fontWeight: 500 }}>
+                {' '}
+                {day.date} <DayStatusPill status={day.status} quality={day.quality} />
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <DayContent id={day.id} status={day.status} onStatusChange={refreshData} />
+            </AccordionDetails>
+          </Accordion>
+        )
+      })}
     </div>
-  );
+  )
 }
 
-export async function getServerSideProps(context: { req: any; }) {
+export async function getServerSideProps(context: { req: any }) {
   const token: any = await getToken({
     req: context.req,
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET
   })
 
+  console.log(getWeekNumber(new Date().toDateString()))
+
   let days
-  if(token) {
-    days =  await prisma.day.findMany({
+  if (token) {
+    days = await prisma.day.findMany({
       where: {
         userId: token.user.id,
         weekNumber: getWeekNumber(new Date().toDateString())
       }
-    }) 
+    })
   } else {
-    throw new Error("No Token")
+    throw new Error('No Token')
   }
 
-  if(days.length < 6) {
-    createAllWeeksDocument();
+  if (days.length < 6) {
+    createAllWeeksDocument()
   }
-  
+
   function createAllWeeksDocument(): void {
     const currentWeek = getWeekAsArray()
     currentWeek.forEach(async dateAsString => {
@@ -119,6 +128,6 @@ export async function getServerSideProps(context: { req: any; }) {
   return {
     props: {
       days
-    }, //
+    } //
   }
 }
