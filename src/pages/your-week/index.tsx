@@ -85,8 +85,6 @@ export async function getServerSideProps(context: { req: any }) {
     secret: process.env.JWT_SECRET
   })
 
-  console.log(getWeekNumber(new Date().toDateString()))
-
   let days
   if (token) {
     days = await prisma.day.findMany({
