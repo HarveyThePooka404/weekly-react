@@ -54,6 +54,7 @@ model User {
   sessions      Session[]
   days          Day[]
   activities    String[]
+  projects      Project[]
 
   @@map(name: "users")
 }
@@ -90,4 +91,29 @@ enum DayStatus {
   DONE
   TOBEDONE
   EXPIRED
+}
+
+//projects
+
+model Project {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  name   String
+  tasks  Task[]
+}
+
+model Task {
+  id        String     @id @default(uuid())
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  status    TaskStatus
+  title     String
+}
+
+enum TaskStatus {
+  DONE
+  ONGOING
+  EXPERIED
+  TOBEDONE
 }
