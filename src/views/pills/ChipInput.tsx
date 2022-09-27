@@ -13,11 +13,6 @@ export default function Tags({
   doneDuringTheDay: string[]
   updateDay: any
 }) {
-  const router = useRouter()
-  const refreshData = () => {
-    router.push(router.asPath)
-  }
-
   const [activitiesToShow, addActivity] = useState(activities)
 
   const updateTag = (event: any, value: string[]) => {
