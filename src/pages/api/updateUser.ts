@@ -1,5 +1,6 @@
 
 import { DayStatus } from "@prisma/client";
+import { getToken } from "next-auth/jwt";
 import  prisma  from "src/lib/prisma"
 
 export default async function handler(req, res){
@@ -16,14 +17,25 @@ export default async function handler(req, res){
 async function UpdateUser(req, res){
     const data = {...req.body}
     delete data["id"];
+
+    if(data["activities"]) {
+        data["activities"] = {
+            push: data["activities"]
+        }
+    }
+
+    const token: any = await getToken({
+        req: req,
+        secret: process.env.JWT_SECRET
+    })
     
     try{
         const day = await prisma.user.update({
             where: {
-                id: req.body.id
+                id: token.user.id
             },
             data: {
-                ...data
+                ...data,
             }
         })
         res.status(200).json({

@@ -51,7 +51,7 @@ export default function DayCard({ day, activities }: { day: Day; activities: str
                 <Button
                   sx={{ marginTop: 4 }}
                   onClick={() => {
-                    updateDay(day.id, textDetail), setState('read'), onStatusChange()
+                    updateDay(day.id, 'textDetail', textDetail), setState('read'), onStatusChange()
                   }}
                   variant='contained'
                   size='small'
@@ -84,17 +84,21 @@ export default function DayCard({ day, activities }: { day: Day; activities: str
             What did you do during that day?
           </Typography>
 
-          <ChipInput activities={activities} />
+          <ChipInput
+            activities={activities}
+            doneDuringTheDay={day.activities}
+            updateDay={{ function: updateDay, dayId: day.id }}
+          />
         </div>
       </CardContent>
     </Card>
   )
 }
 
-async function updateDay(id: string, textDetail: string) {
+async function updateDay(id: string, key: string, value: any) {
   const data = {
     id: id,
-    textDetail: textDetail
+    [key]: value
   }
 
   const JSONdata = JSON.stringify(data)
