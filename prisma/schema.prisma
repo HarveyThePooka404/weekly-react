@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//#region Login
 model Account {
   id                 Int     @id @default(autoincrement())
   userId             String  @map("user_id")
@@ -23,8 +22,7 @@ model Account {
   session_state      String?
   oauth_token_secret String?
   oauth_token        String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -48,15 +46,15 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  activities    String[]
+  days          Day[]
+  projects      Project[]
   accounts      Account[]
   sessions      Session[]
-  days          Day[]
-  activities    String[]
-  projects      Project[]
 
-  @@map(name: "users")
+  @@map("users")
 }
 
 model VerificationToken {
@@ -68,18 +66,32 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
-//#endregion
-
 model Day {
   id         String     @id @default(uuid())
   date       String
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   quality    DayQuality
   status     DayStatus
   weekNumber Int
   textDetail String?
   activities String[]
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id     String @id @default(uuid())
+  userId String
+  name   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks  Task[]
+}
+
+model Task {
+  id        String     @id @default(uuid())
+  projectId String
+  status    TaskStatus
+  title     String
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 enum DayQuality {
@@ -91,24 +103,6 @@ enum DayStatus {
   DONE
   TOBEDONE
   EXPIRED
-}
-
-//projects
-
-model Project {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  name   String
-  tasks  Task[]
-}
-
-model Task {
-  id        String     @id @default(uuid())
-  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String
-  status    TaskStatus
-  title     String
 }
 
 enum TaskStatus {
