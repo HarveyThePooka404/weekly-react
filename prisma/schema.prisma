@@ -3,22 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
-}
-
+//#region Login
 model Account {
   id                 Int     @id @default(autoincrement())
-  userId             Int     @map("user_id")
+  userId             String  @map("user_id")
   type               String
   provider           String
   providerAccountId  String  @map("provider_account_id")
@@ -41,7 +33,7 @@ model Account {
 model Session {
   id           Int      @id @default(autoincrement())
   sessionToken String   @unique @map("session_token")
-  userId       Int      @map("user_id")
+  userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -49,16 +41,20 @@ model Session {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
+  id            String    @id @default(uuid())
   name          String?
+  username      String?
+  password      String
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
   accounts      Account[]
   sessions      Session[]
+  days          Day[]
+  activities    String[]
+  projects      Project[]
 
   @@map(name: "users")
 }
@@ -70,4 +66,54 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+//#endregion
+
+model Day {
+  id         String     @id @default(uuid())
+  date       String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  quality    DayQuality
+  status     DayStatus
+  weekNumber Int
+  textDetail String?
+  activities String[]
+}
+
+enum DayQuality {
+  GOOD
+  BAD
+}
+
+enum DayStatus {
+  DONE
+  TOBEDONE
+  EXPIRED
+}
+
+//projects
+
+model Project {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  name   String
+  tasks  Task[]
+}
+
+model Task {
+  id        String     @id @default(uuid())
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  status    TaskStatus
+  title     String
+}
+
+enum TaskStatus {
+  DONE
+  ONGOING
+  EXPERIED
+  TOBEDONE
 }
