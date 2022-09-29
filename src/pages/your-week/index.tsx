@@ -85,7 +85,7 @@ export async function getServerSideProps(context: { req: any }) {
     secret: process.env.JWT_SECRET
   })
 
-  let days
+  let days: any[] = []
   if (token) {
     days = await prisma.day.findMany({
       where: {
@@ -94,10 +94,10 @@ export async function getServerSideProps(context: { req: any }) {
       }
     })
   } else {
-    throw new Error('No Token')
+    console.log('No Token, No user logged in')
   }
 
-  if (days.length < 6) {
+  if (days.length < 6 && token) {
     createAllWeeksDocument()
   }
 

@@ -22,7 +22,7 @@ export async function getServerSideProps(context: { req: any }) {
     secret: process.env.JWT_SECRET
   })
 
-  let projects
+  let projects: any[] = []
   if (token) {
     projects = await prisma.project.findMany({
       where: {
@@ -30,7 +30,7 @@ export async function getServerSideProps(context: { req: any }) {
       }
     })
   } else {
-    throw new Error('No Token')
+    console.log('No Token, no user logged in')
   }
 
   return {
