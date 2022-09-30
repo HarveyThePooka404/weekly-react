@@ -36,7 +36,7 @@ export default function DayCard({ day, activities }: { day: Day; activities: str
           <Typography variant='h6' sx={{ marginTop: 6, marginBottom: 2 }}>
             What made it a <span style={{ textTransform: 'lowercase' }}>{day.quality}</span> day ?
           </Typography>
-          {day.textDetail == '' ||
+          {
             (state == 'edit' && (
               <div>
                 <TextareaAutosize
